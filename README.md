@@ -26,10 +26,10 @@ Note: This script DOESN'T gaurantee 100% to snipe the car. Due to network and ot
 1. Run with Python
 
 ```
-Git Clone
-cd 
+Git Clone https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper.git
+cd Forza-5-CAR-BUYOUT-Sniper
 pip install -r requirement.txt
-python car_sniper.py
+python main.py
 ```
 
 2. Use Compiled EXE (to be done)
