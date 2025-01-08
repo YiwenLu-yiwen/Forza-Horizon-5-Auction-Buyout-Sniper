@@ -84,7 +84,7 @@ def main():
     search_region_carpage2 = (60+left, 165+top, 180, 40)
 
     current_directory = os.getcwd()
-    print(current_directory)
+
     image_path_SA = current_directory + '/images/SA.png'
     image_path_CF = current_directory + '/images/CF.png'
     image_path_AT = current_directory + '/images/AT.png'
@@ -92,6 +92,7 @@ def main():
     image_path_PB = current_directory + '/images/PB.png'
     image_path_BS = current_directory + '/images/BS.png'
     image_path_NB = current_directory + '/images/NB.png'
+    image_path_VS = current_directory + '/images/VS.png'
     
     print('Welcome to the Forza 5 BUYOUT Snipper')
     print('The script will start in 5 seconds')
@@ -111,8 +112,11 @@ def main():
                 time.sleep(0.4)
                 pydi.press('y')
                 time.sleep(0.15)
+                # detect whether we can place bid, if not it means we either missed it or still loading
                 found_bid = find_max_percentage_image(image_path_PB, search_region_bid, width_ratio, height_ratio, threshold)
-                if found_bid: stop = True
+                found_outbid = find_max_percentage_image(image_path_VS, search_region_bid, width_ratio, height_ratio, threshold)
+                if found_bid or found_outbid: stop = True
+
             # if found buy option
             if found_bid:
                 pydi.press('s')
@@ -135,7 +139,9 @@ def main():
                         pydi.press('enter')
                         pydi.press('esc')
                         stop = True
-
+            else:
+                pydi.press('esc')
+                time.sleep(0.1)
         # return to main auction page
         if found_carpage or vertify_click_CF or find_max_percentage_image(image_path_NB, search_region_carpage2, width_ratio, height_ratio, threshold):
             pydi.press('esc')
