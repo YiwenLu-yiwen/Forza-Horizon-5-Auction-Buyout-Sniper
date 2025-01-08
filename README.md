@@ -9,7 +9,8 @@ Note: This script DOESN'T gaurantee 100% to snipe the car. Due to network and ot
 
 ## Benefits
 1. Automatically snipe the car with pre-set requirements.
-2. Only need 3 steps to set-up within 10 mins. 
+2. Only need 3 steps to set-up within 10 mins.
+3. This script only needs 40MB memory.
 
 ## Pre-Requirements
 1. System Requirements:
@@ -37,7 +38,7 @@ Note: This script DOESN'T gaurantee 100% to snipe the car. Due to network and ot
 ```
 Git Clone https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper.git
 cd Forza-5-CAR-BUYOUT-Sniper
-pip install -r requirement.txt
+pip install -r requirements.txt
 python main.py
 ```
 
