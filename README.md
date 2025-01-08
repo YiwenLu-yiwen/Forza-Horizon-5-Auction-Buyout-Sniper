@@ -59,3 +59,8 @@ python main.py
 3. Stay with this screen (Search auctions must be active), then run the script or exe.
 
 ![Auction House](archive/auction_house.png)
+
+## Future Work
+1. Apply a better interface rather than console.
+2. Accept multiple car auctions.
+3. Fit any resolution.
