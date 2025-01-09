@@ -201,6 +201,9 @@ def main():
                 print('BUYOUT Missed!')
                 pydi.press('esc')
                 time.sleep(0.1)
+        # if stuck somewhere unknown, this may work
+        if vertify_click_SA==False and vertify_click_CF==False and found_carpage==None:
+            pydi.press('esc')
         # return to main auction page
         if found_carpage or vertify_click_CF or find_max_percentage_image(image_path_NB, search_region_carpage2, width_ratio, height_ratio, threshold):
             pydi.press('esc')
