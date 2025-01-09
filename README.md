@@ -1,4 +1,5 @@
-# Forza-5-CAR-BUYOUT-Sniper
+# Forza-Horizon-5-Auction-Buyout-Sniper
+
 This is the first script using image matching (e.g., OpenCV) to create a much faster and more stable macro for sniping a variety of desired cars in the auction house. Rather than sniping single specific cars, this script aims at on fully collection for this game.
 
 Note: This script DOESN'T gaurantee 100% to snipe the car. Due to network and other potential issues, you may run it for nothing or get quite a few cars within a long time.
