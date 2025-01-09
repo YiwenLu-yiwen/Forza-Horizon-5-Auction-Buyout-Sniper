@@ -2,6 +2,7 @@ import os
 import cv2
 import time
 import numpy as np
+import pandas as pd
 import pyautogui as pyau
 import pydirectinput as pydi
 import pygetwindow as gw
@@ -42,6 +43,36 @@ def find_max_percentage_image(image_path, region=None, width_ratio=1, height_rat
             return best_loc, best_index
         return best_loc
     return None
+
+def multi_press(button, _times):
+    """Multi-press
+    """
+    for _ in range(_times):
+        pydi.press(button)
+        time.sleep(0.2)
+
+def multi_press_cond(button1, button2, _times):
+    if _times > 0:
+        multi_press(button1, _times)
+    else:
+         multi_press(button2, abs(_times))
+
+def go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER):
+    x, y = np.array(old_make) - np.array(new_make)
+    pydi.press('enter')
+    time.sleep(0.3)
+    multi_press_cond('a', 'd', x)
+    multi_press_cond('w', 's', y)
+    pydi.press('enter')
+    time.sleep(0.3)
+    multi_press('s', 1)
+    if x ==0 and y == 0: # same brand
+        CAR_MODEL_move = new_CAR_MODEL_ORDER-old_CAR_MODEL_ORDER
+    else:
+        CAR_MODEL_move = new_CAR_MODEL_ORDER
+    multi_press_cond('d', 'a', CAR_MODEL_move)
+    multi_press('s', 5)
+    pydi.press('enter')
 
 def measure_game_window(title):
     """ Measure the game window size
@@ -93,23 +124,44 @@ def main():
     image_path_BS = current_directory + '/images/BS.png'
     image_path_NB = current_directory + '/images/NB.png'
     image_path_VS = current_directory + '/images/VS.png'
-    
-    print('Welcome to the Forza 5 BUYOUT Snipper')
+
+    print('Welcome to the Forza 5 CAR BUYOUT Snipper')
     print('The script will start in 5 seconds')
     time.sleep(5)
     print('Starts')
 
+    change_make = True
+    old_make, old_CAR_MODEL_ORDER = [0,0], 0
     while True:
         vertify_click_SA = click_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.1)
-        vertify_click_CF = click_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold)
+        # change car here
+        if change_make and find_max_percentage_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold):
+            vertify_click_CF = True
+            change_make = False
+            # read file and filter non-zero cars
+            df = pd.read_csv('CARS.csv')
+            if len(df[df.Numbers_buy > 0]) == 0:
+                print('Finish Sniping!')
+                break
+            for index, row in df.iterrows():
+                if row.Numbers_buy:
+                    CAR_MAKE,CAR_MODEL,CAR_MODEL_ORDER, X, Y = row.values[:5]
+                    new_make, new_CAR_MODEL_ORDER = [X, Y], CAR_MODEL_ORDER
+                    print('Sniping',CAR_MAKE,CAR_MODEL)
+                    break
+            # modify car details
+            multi_press('w', 6) # one more move make sure it goes smoothly
+            go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
+        else:
+            vertify_click_CF = click_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.5)
         found_carpage = find_max_percentage_image(image_path_AT, search_region_carpage, width_ratio, height_ratio, threshold)
         # if found car in stock
         if found_carpage:
             stop = False
             while not stop:
-                time.sleep(0.4)
+                time.sleep(0.1)
                 pydi.press('y')
                 time.sleep(0.15)
                 # detect whether we can place bid, if not it means we either missed it or still loading
@@ -136,10 +188,17 @@ def main():
                         stop = True
                     if found_buyoutsuccess:
                         print('BUYOUT Success!')
+                        # Change to the next car
+                        df.loc[index, 'Numbers_buy'] = df['Numbers_buy'][index]-1
+                        df.to_csv(current_directory + '/CARS.csv', index=False)
+                        if df.loc[index, 'Numbers_buy'] == 0:
+                            change_make = True
+                            old_make, old_CAR_MODEL_ORDER = new_make, new_CAR_MODEL_ORDER
                         pydi.press('enter')
                         pydi.press('esc')
                         stop = True
             else:
+                print('BUYOUT Missed!')
                 pydi.press('esc')
                 time.sleep(0.1)
         # return to main auction page
