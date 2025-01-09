@@ -33,9 +33,9 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 
 3. Default language is English, any other language should replace all screenshots (See images folder, DON'T CHANGE FILE NAME)
 
-4. Modify the `CARS.csv`
+4. Modify the [CARS.csv](https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper/blob/main/CARS.csv)
     
-    This is an example of `APOLLO IE WP`. This car shows `APOLLO,APOLLO IE WP,3,1,2,0` in `csv`. Let's explain what these numbers mean and how to build your own target car.
+    This is an example of `APOLLO IE WP`. This car shows `APOLLO,APOLLO IE WP,3,1,2,0` in the first line in [CARS.csv](https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper/blob/main/CARS.csv). Let's explain what these numbers mean and how to build your own target car.
     
     Firstly, we define that `ANY` in `MANUFACTURER` page locates at `X=0, Y=0`. Then, `APOLLO` is at `X=3,Y=1`.
 
@@ -47,6 +47,8 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 
     Lastly, set the cell under `Numbers_buy=n`. `n>0` means that you want to snipe `n` number of this car, whereas `n=0` means that the script finishes sniping it or you want to skip it.
 
+    Hence, `APOLLO,APOLLO IE WP,3,1,2,0` means, `APOLLO` Make locates at `X=3, Y=1` and it needs `2` right turn to reach `APOLLO IE WP` model with `0` times car sniper (the script will skip this car).
+   
 ## How to run it
 1. Run with Python
     
