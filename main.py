@@ -146,12 +146,13 @@ def main():
         if end_time - start_time > 1800:
             change_make = True
             failed_snipe = True
-        if failed_snipe:
-            print('Switching to Next Auction Sniper!')
         vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.1)
         # change car here
         if change_make and find_max_percentage_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold):
+            if failed_snipe:
+                failed_snipe=False
+                print('TIME OUT, Switching to Next Auction Sniper!')
             start_time = time.time()
             vertify_press_CF = True
             change_make = False
