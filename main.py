@@ -59,12 +59,13 @@ def multi_press_cond(button1, button2, _times):
 
 def go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER):
     x, y = np.array(old_make) - np.array(new_make)
-    pydi.press('enter')
-    time.sleep(0.3)
-    multi_press_cond('a', 'd', x)
-    multi_press_cond('w', 's', y)
-    pydi.press('enter')
-    time.sleep(0.3)
+    if x!=0 or y!=0:
+        pydi.press('enter')
+        time.sleep(0.3)
+        multi_press_cond('a', 'd', x)
+        multi_press_cond('w', 's', y)
+        pydi.press('enter')
+        time.sleep(0.3)
     multi_press('s', 1)
     if x ==0 and y == 0: # same brand
         CAR_MODEL_move = new_CAR_MODEL_ORDER-old_CAR_MODEL_ORDER
@@ -95,13 +96,19 @@ def measure_game_window(title):
     except Exception as e:
         print(f"An error occurred: {e}")
     
-def click_image(image_path, search_region, width_ratio, height_ratio, threshold):
+def press_image(image_path, search_region, width_ratio, height_ratio, threshold):
     best_loc = find_max_percentage_image(image_path, search_region, width_ratio, height_ratio, threshold)
     left, top, width, height = search_region
     if best_loc:
         pydi.press('enter')
         return True
     return False
+
+def click_left():
+    # Simulate the left mouse click
+    pydi.mouseDown()
+    time.sleep(0.05)
+    pydi.mouseUp()
 
 def main():
     threshold=0.8
@@ -111,9 +118,8 @@ def main():
     width_ratio, height_ratio = 1, 1
     search_region_auction = (230+left, 590+top, 910, 310)
     search_region_carpage = (790+left, 190+top, 810, 90)
-    search_region_bid = (520+left, 400+top, 610, 80)
+    search_region_bid = (520+left, 380+top, 610, 100)
     search_region_carpage2 = (60+left, 165+top, 180, 40)
-
     current_directory = os.getcwd()
 
     image_path_SA = current_directory + '/images/SA.png'
@@ -124,6 +130,7 @@ def main():
     image_path_BS = current_directory + '/images/BS.png'
     image_path_NB = current_directory + '/images/NB.png'
     image_path_VS = current_directory + '/images/VS.png'
+    image_path_AO = current_directory + '/images/AO.png'
 
     print('Welcome to the Forza 5 CAR BUYOUT Snipper')
     print('The script will start in 5 seconds')
@@ -131,30 +138,39 @@ def main():
     print('Starts')
 
     change_make = True
-    old_make, old_CAR_MODEL_ORDER = [0,0], 0
+    new_make, new_CAR_MODEL_ORDER = [0,0], 0
+    missed_match_times = 0
+    start_time, all_snipe_index, failed_snipe = 0, [], False
     while True:
-        vertify_click_SA = click_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
+        end_time = time.time()
+        if end_time - start_time > 1800:
+            change_make = True
+            failed_snipe = True
+        if failed_snipe:
+            print('Switching to Next Auction Sniper!')
+        vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.1)
         # change car here
         if change_make and find_max_percentage_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold):
-            vertify_click_CF = True
+            start_time = time.time()
+            vertify_press_CF = True
             change_make = False
             # read file and filter non-zero cars
             df = pd.read_csv('CARS.csv')
             if len(df[df.Numbers_buy > 0]) == 0:
                 print('Finish Sniping!')
                 break
-            for index, row in df.iterrows():
-                if row.Numbers_buy:
-                    CAR_MAKE,CAR_MODEL,CAR_MODEL_ORDER, X, Y = row.values[:5]
-                    new_make, new_CAR_MODEL_ORDER = [X, Y], CAR_MODEL_ORDER
-                    print('Sniping',CAR_MAKE,CAR_MODEL)
-                    break
+            all_snipe_index = df[df.Numbers_buy > 0].index.tolist() if all_snipe_index == [] else all_snipe_index
+            index = all_snipe_index.pop()
+            old_make, old_CAR_MODEL_ORDER = new_make, new_CAR_MODEL_ORDER
+            CAR_MAKE,CAR_MODEL,CAR_MODEL_ORDER, X, Y = df.iloc[index,].values[:5]
+            new_make, new_CAR_MODEL_ORDER = [X, Y], CAR_MODEL_ORDER
+            print('Sniping',CAR_MAKE,CAR_MODEL)   
             # modify car details
             multi_press('w', 6) # one more move make sure it goes smoothly
             go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
         else:
-            vertify_click_CF = click_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold)
+            vertify_press_CF = press_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.5)
         found_carpage = find_max_percentage_image(image_path_AT, search_region_carpage, width_ratio, height_ratio, threshold)
         # if found car in stock
@@ -163,11 +179,11 @@ def main():
             while not stop:
                 time.sleep(0.1)
                 pydi.press('y')
-                time.sleep(0.15)
                 # detect whether we can place bid, if not it means we either missed it or still loading
                 found_bid = find_max_percentage_image(image_path_PB, search_region_bid, width_ratio, height_ratio, threshold)
                 found_outbid = find_max_percentage_image(image_path_VS, search_region_bid, width_ratio, height_ratio, threshold)
-                if found_bid or found_outbid: stop = True
+                found_auction_option = find_max_percentage_image(image_path_AO, search_region_bid, width_ratio, height_ratio, threshold)
+                if found_bid or found_outbid or found_auction_option: stop = True
 
             # if found buy option
             if found_bid:
@@ -202,10 +218,16 @@ def main():
                 pydi.press('esc')
                 time.sleep(0.1)
         # if stuck somewhere unknown, this may work
-        if vertify_click_SA==False and vertify_click_CF==False and found_carpage==None:
-            pydi.press('esc')
+        if vertify_press_SA==False and vertify_press_CF==False and found_carpage==None:
+            pyau.moveTo(left+20, top+20, duration=0.001)
+            click_left()
+            if missed_match_times >=2:
+                pydi.press('esc')
+            missed_match_times += 1
+        else:
+            missed_match_times = 0
         # return to main auction page
-        if found_carpage or vertify_click_CF or find_max_percentage_image(image_path_NB, search_region_carpage2, width_ratio, height_ratio, threshold):
+        if found_carpage or vertify_press_CF or find_max_percentage_image(image_path_NB, search_region_carpage2, width_ratio, height_ratio, threshold):
             pydi.press('esc')
         time.sleep(0.4)
 
