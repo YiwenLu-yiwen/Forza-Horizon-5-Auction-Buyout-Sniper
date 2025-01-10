@@ -2,7 +2,7 @@
 
 This is the first script using image matching (e.g., OpenCV) to create a much faster and more stable macro for sniping a variety of desired cars in the auction house. Rather than sniping single specific cars, this script aims at on fully collection for this game.
 
-Note: This script DOESN'T gaurantee 100% to snipe the car. Due to network and other potential issues, you may run it for nothing or get quite a few cars within a long time.
+Note: This script DOESN'T gaurantee 100% to snipe the auctions. Due to network and other potential issues, you may run it for nothing or get quite a few cars within a long time.
 
 ## Performance Preview (2MIN Demo)
 
@@ -10,10 +10,19 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 
 ![preview](archive/demo.gif)
 
-## Benefits
-1. Automatically snipe multiple cars.
-2. Fully control of sniping what cars and how many of them.
-3. This script is memory efficient with only 40MB.
+## Features
+✅ Fast sniping   
+✅ Enable single or multi auction snipers      
+✅ Auto switch cars in multi auctions   
+✅ Easy set-up (only need to add car details in `CARS.csv`)  
+✅ Memory efficient with only 40MB    
+
+## Limits:
+1. The location (numbers) in [CARS.csv](https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper/blob/main/CARS.csv) __MUST BE CORRECT__!!!
+
+## Future Work
+- [ ] Apply a better interface rather than console.
+- [ ] Fit any resolution.
 
 ## Pre-Requirements
 1. System Requirements:
@@ -79,7 +88,3 @@ python main.py
 4. Stay with this screen (Search auctions must be active), then run the script or exe.
 
 ![Auction House](archive/auction_house.png)
-
-## Future Work
-1. Apply a better interface rather than console.
-2. Fit any resolution.
