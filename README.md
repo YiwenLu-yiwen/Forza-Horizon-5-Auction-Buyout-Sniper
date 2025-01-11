@@ -11,11 +11,16 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 ![preview](archive/demo.gif)
 
 ## Features
-✅ Fast sniping   
-✅ Enable single or multi auction snipers      
-✅ Auto switch cars in multi auctions   
-✅ Easy set-up (only need to add car details in `CARS.csv`)  
-✅ Memory efficient with only 40MB    
+
+|Name         |Latest version           |Breif introduction            |
+| ------------- |:-------------:|:-------------:|
+| ✅ Fast sniping                             |  v1.1          | Fast speed buyout |
+| ✅ Enable single or multi auction snipers   |  v2.1          | Support one or many different car snipers      |
+| ✅ Smart auto switch cars                   |  v3.0          | If one auction takes more than 30mins, switch to another car  |
+| ✅ Easy set-up                              |  v2.1          | Only needs to add car details in `CARS.csv` |
+| ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
+| 🕐 Include all car info                     |  v4.0(TBD)              | Include short_name, seasons, DLC, Autoshow,etc    |
+|         |            |
 
 ## Limits:
 1. The location (numbers) in [CARS.csv](https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper/blob/main/CARS.csv) __MUST BE CORRECT__!!!
