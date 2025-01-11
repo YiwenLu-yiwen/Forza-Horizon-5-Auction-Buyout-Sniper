@@ -12,13 +12,13 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 
 ## Features
 
-|Name         |Latest version           |Breif introduction            |
+|Name         |Added version           |Breif introduction            |
 | ------------- |:-------------:|:-------------:|
-| ✅ Fast sniping                             |  v1.1          | Fast speed buyout |
-| ✅ Enable single or multi auction snipers   |  v2.1          | Support one or many different car snipers      |
+| ✅ Fast sniping                             |  v1.0          | Fast speed buyout |
+| ✅ Enable single or multi auction snipers   |  v2.0          | Support one or many different car snipers      |
 | ✅ Smart auto switch cars                   |  v3.0          | If one auction takes more than 30mins, switch to another car  |
-| ✅ Easy set-up                              |  v2.1          | Only needs to add car details in `CARS.csv` |
-| ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
+| ✅ Easy set-up                              |  v2.0          | Only needs to add car details in `CARS.csv` |
+| ✅  Memory efficient with only 40MB         |  v1.0          | Less memory costs      |
 | 🕐 Include all car info                     |  v4.0(TBD)              | Include short_name, seasons, DLC, Autoshow,etc    |
 |         |            |
 
