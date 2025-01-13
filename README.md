@@ -20,10 +20,6 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 | ✅ Easy set-up                              |  v4.0          | Only needs to set how many cars you want to buy |
 | ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
 | ✅ Include all car info                     |  v4.0          | Include short_name, seasons, DLC, Autoshow,etc    |
-=======
-| ✅ Easy set-up                              |  v2.0          | Only needs to add car details in `CARS.csv` |
-| ✅  Memory efficient with only 40MB         |  v1.0          | Less memory costs      |
-| ✅ Include all car info                     |  v4.0          | Include short_name, seasons, DLC, Autoshow,etc    |
 |         |            |
 
 ## Limits:
