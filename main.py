@@ -3,6 +3,7 @@ import cv2
 import time
 import numpy as np
 import pandas as pd
+from openpyxl import load_workbook
 import pyautogui as pyau
 import pydirectinput as pydi
 import pygetwindow as gw
@@ -110,10 +111,32 @@ def click_left():
     time.sleep(0.05)
     pydi.mouseUp()
 
+def write_excel(data, output_path, sheet_name):
+    # write dataframe to excel and format the excel
+    data.to_excel(output_path, index=False, sheet_name=sheet_name)
+
+    workbook = load_workbook(output_path)
+    sheet = workbook.active
+    sheet.auto_filter.ref = sheet.dimensions
+    for col in sheet.columns:
+        max_length = 0
+        col_letter = col[0].column_letter
+        for cell in col:
+            try:
+                # Calculate the maximum length of values in the column (including the header)
+                max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        # Adjust the column width
+        sheet.column_dimensions[col_letter].width = max_length + 2
+    # Save the workbook with adjusted widths
+    workbook.save(output_path)
+
 def main():
     threshold=0.8
     game_title = "Forza Horizon 5"
 
+    # screenshot regions here
     left, top, width, height = measure_game_window(game_title)
     width_ratio, height_ratio = 1, 1
     search_region_auction = (230+left, 590+top, 910, 310)
@@ -122,6 +145,7 @@ def main():
     search_region_carpage2 = (60+left, 165+top, 180, 40)
     current_directory = os.getcwd()
 
+    # screenshots here
     image_path_SA = current_directory + '/images/SA.png'
     image_path_CF = current_directory + '/images/CF.png'
     image_path_AT = current_directory + '/images/AT.png'
@@ -132,13 +156,17 @@ def main():
     image_path_VS = current_directory + '/images/VS.png'
     image_path_AO = current_directory + '/images/AO.png'
 
+    # car info details here
+    car_info_file_path = "./FH5_all_cars_info_v3.xlsx"
+    car_sheet_name = 'all_cars_info'
+
     print('Welcome to the Forza 5 CAR BUYOUT Snipper')
     print('The script will start in 5 seconds')
     time.sleep(5)
     print('Starts')
 
     change_make = True
-    new_make, new_CAR_MODEL_ORDER = [0,0], 0
+    new_make, new_CAR_MODEL_ORDER = (0,0), 0
     missed_match_times = 0
     start_time, all_snipe_index, failed_snipe = 0, [], False
     while True:
@@ -157,16 +185,17 @@ def main():
             vertify_press_CF = True
             change_make = False
             # read file and filter non-zero cars
-            df = pd.read_csv('CARS.csv')
-            if len(df[df.Numbers_buy > 0]) == 0:
+            df = pd.read_excel(car_info_file_path, car_sheet_name)
+            if len(df[df['BUYOUT NUM'] > 0]) == 0:
                 print('Finish Sniping!')
                 break
-            all_snipe_index = df[df.Numbers_buy > 0].index.tolist() if all_snipe_index == [] else all_snipe_index
+            all_snipe_index = df[df['BUYOUT NUM'] > 0].index.tolist() if all_snipe_index == [] else all_snipe_index
             index = all_snipe_index.pop()
             old_make, old_CAR_MODEL_ORDER = new_make, new_CAR_MODEL_ORDER
-            CAR_MAKE,CAR_MODEL,CAR_MODEL_ORDER, X, Y = df.iloc[index,].values[:5]
-            new_make, new_CAR_MODEL_ORDER = [X, Y], CAR_MODEL_ORDER
-            print('Sniping',CAR_MAKE,CAR_MODEL)   
+
+            CAR_MAKE,CAR_MAKE_LOCATION, CAR_MODEL_Full_Name, CAR_MODEL_Short_Name, CAR_MODEL_LOCATION = df.iloc[index,].values[:5]
+            new_make, new_CAR_MODEL_ORDER = eval(CAR_MAKE_LOCATION), CAR_MODEL_LOCATION
+            print('Sniping',CAR_MAKE, CAR_MODEL_Full_Name)   
             # modify car details
             multi_press('w', 6) # one more move make sure it goes smoothly
             go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
@@ -206,9 +235,9 @@ def main():
                     if found_buyoutsuccess:
                         print('BUYOUT Success!')
                         # Change to the next car
-                        df.loc[index, 'Numbers_buy'] = df['Numbers_buy'][index]-1
-                        df.to_csv(current_directory + '/CARS.csv', index=False)
-                        if df.loc[index, 'Numbers_buy'] == 0:
+                        df.loc[index, 'BUYOUT NUM'] = df['BUYOUT NUM'][index]-1
+                        write_excel(df, car_info_file_path, car_sheet_name)
+                        if df.loc[index, 'BUYOUT NUM'] == 0:
                             change_make = True
                             old_make, old_CAR_MODEL_ORDER = new_make, new_CAR_MODEL_ORDER
                         pydi.press('enter')
