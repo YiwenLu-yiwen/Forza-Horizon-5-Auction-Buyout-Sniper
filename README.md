@@ -4,6 +4,8 @@ This is the first script using image matching (e.g., OpenCV) to create a much fa
 
 Note: This script DOESN'T gaurantee 100% to snipe the auctions. Due to network and other potential issues, you may run it for nothing or get quite a few cars within a long time.
 
+This script is against [Forza Code of Conduct](https://support.forzamotorsport.net/hc/en-us/articles/360035563914-Forza-Code-of-Conduct#:~:text=Forza%20Code%20of%20Conduct%201%20The%20Driver%E2%80%99s%20Code,Suspensions%2FBanning%20...%204%20Appeals%20...%205%20Reporting%20), Use it as YOUR OWN RISK!
+
 ## Performance Preview (2MIN Demo)
 
 In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEGANE R26 R`, `MINI COUNTRYMAN`.
@@ -20,6 +22,7 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 | ✅ Easy set-up                              |  v4.0          | Only needs to set how many cars you want to buy |
 | ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
 | ✅ Include all car info                     |  v4.0          | Include short_name, seasons, DLC, Autoshow,etc    |
+✅ Game pre-check                     |  v4.0          |Game and windows resolution pre-check
 |         |            |
 
 ## Limits:
