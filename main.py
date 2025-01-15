@@ -207,7 +207,7 @@ def main():
     while True:
 
         end_time = time.time()
-        if end_time - start_time > 5:
+        if end_time - start_time > 1800:
             change_make = True
             failed_snipe = True
         vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
