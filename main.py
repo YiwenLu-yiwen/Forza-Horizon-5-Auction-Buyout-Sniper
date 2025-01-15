@@ -1,5 +1,6 @@
 import os
 import cv2
+import ctypes
 import time
 import numpy as np
 import pandas as pd
@@ -25,7 +26,7 @@ def find_max_percentage_image(image_path, region=None, width_ratio=1, height_rat
         image_path = [image_path]
     return_index = True if len(image_path) > 1 else False
     _index = 0
-    _error = 5*width_ratio
+    # _error = 5*width_ratio
     best_prob = 0
     best_loc = ()
     for each_image_path in image_path:
@@ -85,17 +86,19 @@ def measure_game_window(title):
             if not game_window.isMinimized:
                 game_window.restore()
             game_window.activate()
+            # game_window.resizeTo(width, height)
             # measure game window
             left, top, width, height = game_window.left, game_window.top, game_window.width, game_window.height
-            print(f"Game window found: {title}")
-            print(f"Size '{title}' is {width}x{height} pixels.")
+            print(f"\033[1;34;40mGame window found: \033[1;32;40m{title}\033[0m")
+            # print(f"Size '{title}' is {width}x{height} pixels.")
             return left, top, width, height
         else:
-            print("Game window not found. Check the title.")
+            print("\033[1;31;40mGame window not found. Check the title.\033[0m")
     except IndexError:
-        print("Game window not found. Make sure the title is correct.")
+        print("\033[1;31;40mGame window not found. Make sure the title is correct.\033[0m")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"\033[1;31;40mAn error occurred: {e}.\033[0m")
+        print(f"\033[1;31;40mTry to restart the script!\033[0m")
     
 def press_image(image_path, search_region, width_ratio, height_ratio, threshold):
     best_loc = find_max_percentage_image(image_path, search_region, width_ratio, height_ratio, threshold)
@@ -132,19 +135,48 @@ def write_excel(data, output_path, sheet_name):
     # Save the workbook with adjusted widths
     workbook.save(output_path)
 
-def main():
-    threshold=0.8
-    game_title = "Forza Horizon 5"
+def exit_script():
+    print(f'\033[1;31;40mScript exits in 5 seconds! \033[0m')
+    time.sleep(5)
+    print(f'\033[1;31;40mScript stops! \033[0m')
+    
+def convert_seconds(seconds):
+    minutes = int(seconds // 60)
+    remaining_seconds = int(seconds % 60)
+    return minutes, remaining_seconds
 
-    # screenshot regions here
+def main():
+    print('Welcome to the Forza 5 CAR BUYOUT Snipper')
+    # add pre-check settings
+    color_end_code = '\033[0m'
+    red_code, blue_code, cyan_code, green_code, yellow_code = '\033[1;31;40m', '\033[1;34;40m', '\033[1;36;40m', '\033[1;32;40m', '\033[1;33;40m'
+    print(f'{blue_code}Running Pre-check:{color_end_code} {cyan_code}Window resolution {color_end_code}and {cyan_code}Game resolution !{color_end_code}')
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    print(f'{cyan_code}Your Window Resolution is {screensize[0]}x{screensize[1]} !{color_end_code}')
+    if screensize != (1920, 1080):
+        print(f'{red_code}Sorry, script only works under 1920x1080 resolution! {color_end_code}')
+        exit_script()
+        return -1
+    # check game resolution
+    game_title = "Forza Horizon 5" 
     left, top, width, height = measure_game_window(game_title)
+    print(f'{cyan_code}{game_title} resolution is {width}x{height} pixels!{color_end_code}')
+    if width!=1616 and height!=939:
+        print(f'{red_code}{game_title} resolution is not 1920*1080 (Windowed){color_end_code}')
+        print(f'{red_code}Try to restart the game!{color_end_code}')
+        exit_script()
+        return -1
+    
+    # screenshot regions here
+    threshold=0.8
     width_ratio, height_ratio = 1, 1
+    current_directory = os.getcwd()
     search_region_auction = (230+left, 590+top, 910, 310)
     search_region_carpage = (790+left, 190+top, 810, 90)
     search_region_bid = (520+left, 380+top, 610, 100)
     search_region_carpage2 = (60+left, 165+top, 180, 40)
-    current_directory = os.getcwd()
-
+    
     # screenshots here
     image_path_SA = current_directory + '/images/SA.png'
     image_path_CF = current_directory + '/images/CF.png'
@@ -160,7 +192,6 @@ def main():
     car_info_file_path = "./FH5_all_cars_info_v3.xlsx"
     car_sheet_name = 'all_cars_info'
 
-    print('Welcome to the Forza 5 CAR BUYOUT Snipper')
     print('The script will start in 5 seconds')
     time.sleep(5)
     print('Starts')
@@ -169,25 +200,32 @@ def main():
     new_make, new_CAR_MODEL_ORDER = (0,0), 0
     missed_match_times = 0
     start_time, all_snipe_index, failed_snipe = 0, [], False
+    first_start = True # add this to detect whether it is first start
+
     while True:
+
         end_time = time.time()
-        if end_time - start_time > 1800:
+        if end_time - start_time > 5:
             change_make = True
             failed_snipe = True
         vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.1)
         # change car here
         if change_make and find_max_percentage_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold):
-            if failed_snipe:
+            if failed_snipe and not first_start:
                 failed_snipe=False
-                print('TIME OUT, Switching to Next Auction Sniper!')
+                end_time = time.time()
+                minutes, remaining_seconds = convert_seconds(end_time-start_time)
+                print(f'[{minutes}:{remaining_seconds}] TIME OUT, Switching to Next Auction Sniper!')
+            else:
+                first_start=False
             start_time = time.time()
             vertify_press_CF = True
             change_make = False
             # read file and filter non-zero cars
             df = pd.read_excel(car_info_file_path, car_sheet_name)
             if len(df[df['BUYOUT NUM'] > 0]) == 0:
-                print('Finish Sniping!')
+                print(f'{green_code}Finish Sniping!{color_end_code}')
                 break
             all_snipe_index = df[df['BUYOUT NUM'] > 0].index.tolist() if all_snipe_index == [] else all_snipe_index
             index = all_snipe_index.pop()
@@ -195,8 +233,9 @@ def main():
 
             CAR_MAKE,CAR_MAKE_LOCATION, CAR_MODEL_Full_Name, CAR_MODEL_Short_Name, CAR_MODEL_LOCATION = df.iloc[index,].values[:5]
             new_make, new_CAR_MODEL_ORDER = eval(CAR_MAKE_LOCATION), CAR_MODEL_LOCATION
-            print('Sniping',CAR_MAKE, CAR_MODEL_Full_Name)   
-            # modify car details
+            print(f'Sniping {blue_code}{CAR_MODEL_Full_Name}{color_end_code}')   
+            # modify 
+            # car details
             multi_press('w', 6) # one more move make sure it goes smoothly
             go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
         else:
@@ -228,12 +267,16 @@ def main():
                     found_buyoutfail = find_max_percentage_image(image_path_BF, search_region_bid, width_ratio, height_ratio, threshold)
                     found_buyoutsuccess = find_max_percentage_image(image_path_BS, search_region_bid, width_ratio, height_ratio, threshold)
                     if found_buyoutfail:
-                        print('BUYOUT Failed!')
+                        end_time = time.time()
+                        minutes, remaining_seconds = convert_seconds(end_time-start_time)
+                        print(f'[{minutes}:{remaining_seconds}] {red_code}BUYOUT Failed!{color_end_code}')
                         pydi.press('enter')
                         pydi.press('esc')
                         stop = True
                     if found_buyoutsuccess:
-                        print('BUYOUT Success!')
+                        end_time = time.time()
+                        minutes, remaining_seconds = convert_seconds(end_time-start_time)
+                        print(f'[{minutes}:{remaining_seconds}] {green_code}BUYOUT Success!{color_end_code}')
                         # Change to the next car
                         df.loc[index, 'BUYOUT NUM'] = df['BUYOUT NUM'][index]-1
                         write_excel(df, car_info_file_path, car_sheet_name)
@@ -244,15 +287,22 @@ def main():
                         pydi.press('esc')
                         stop = True
             else:
-                print('BUYOUT Missed!')
+                end_time = time.time()
+                minutes, remaining_seconds = convert_seconds(end_time-start_time)
+                print(f'[{minutes}:{remaining_seconds}] {yellow_code}BUYOUT Missed!{color_end_code}')
                 pydi.press('esc')
                 time.sleep(0.1)
         # if stuck somewhere unknown, this may work
         if vertify_press_SA==False and vertify_press_CF==False and found_carpage==None:
+            print(f'{red_code}Fail to match anything. Try to press ESC to see whether it works!{color_end_code}')
             pyau.moveTo(left+20, top+20, duration=0.001)
             click_left()
-            if missed_match_times >=2:
-                pydi.press('esc')
+            pydi.press('esc')
+            time.sleep(0.2)                
+            if missed_match_times > 10:
+                print(f'{red_code}Fail to detect anything, try to restart the script or game!{color_end_code}')
+                exit_script()
+                return -1
             missed_match_times += 1
         else:
             missed_match_times = 0
