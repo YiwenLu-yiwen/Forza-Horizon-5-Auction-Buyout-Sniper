@@ -2,6 +2,7 @@ import os
 import cv2
 import ctypes
 import time
+import colorama
 import numpy as np
 import pandas as pd
 from openpyxl import load_workbook
@@ -146,6 +147,7 @@ def convert_seconds(seconds):
     return minutes, remaining_seconds
 
 def main():
+    colorama.init(wrap=True)
     print('Welcome to the Forza 5 CAR BUYOUT Snipper')
     # add pre-check settings
     color_end_code = '\033[0m'
