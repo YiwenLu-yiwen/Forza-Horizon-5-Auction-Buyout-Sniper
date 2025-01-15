@@ -12,6 +12,11 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 
 ![preview](archive/demo.gif)
 
+
+## Result Preview
+![Result](archive/script_result.PNG)
+![ingame result](archive/game_success.png)
+
 ## Features
 
 |Name         |Added version           |Breif introduction            |
@@ -22,7 +27,7 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 | ✅ Easy set-up                              |  v4.0          | Only needs to set how many cars you want to buy |
 | ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
 | ✅ Include all car info                     |  v4.0          | Include short_name, seasons, DLC, Autoshow,etc    |
-✅ Game pre-check                     |  v4.0          |Game and windows resolution pre-check
+✅ Game pre-check                     |  v4.0          |Game and windows resolution pre-check |
 |         |            |
 
 ## Limits:
