@@ -60,6 +60,10 @@ def multi_press_cond(button1, button2, _times):
     else:
          multi_press(button2, abs(_times))
 
+def move_mouse(x, y):
+    # Move the mouse to the specified coordinates
+    pyau.moveTo(x, y, duration=0.001)  # Move to (x, y) over 1 second
+
 def go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER):
     x, y = np.array(old_make) - np.array(new_make)
     if x!=0 or y!=0:
@@ -78,15 +82,22 @@ def go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER):
     multi_press('s', 5)
     pydi.press('enter')
 
+def active_game_window(title):
+    game_window = gw.getWindowsWithTitle(title)[0]
+    if game_window:
+        try:
+            game_window.activate()
+        except:
+            game_window.minimize()
+            game_window.restore()
+    return game_window
+
 def measure_game_window(title):
     """ Measure the game window size
     """
     try:
-        game_window = gw.getWindowsWithTitle(title)[0]
+        game_window = active_game_window(title)
         if game_window:
-            if not game_window.isMinimized:
-                game_window.restore()
-            game_window.activate()
             # game_window.resizeTo(width, height)
             # measure game window
             left, top, width, height = game_window.left, game_window.top, game_window.width, game_window.height
@@ -146,6 +157,12 @@ def convert_seconds(seconds):
     remaining_seconds = int(seconds % 60)
     return minutes, remaining_seconds
 
+def multi_click_left(n):
+    # click n times
+    for _ in range(n):
+        click_left()
+        time.sleep(0.01)
+
 def main():
     colorama.init(wrap=True)
     print('Welcome to the Forza 5 CAR BUYOUT Snipper')
@@ -193,7 +210,6 @@ def main():
     # car info details here
     car_info_file_path = "./FH5_all_cars_info_v3.xlsx"
     car_sheet_name = 'all_cars_info'
-
     print('The script will start in 5 seconds')
     time.sleep(5)
     print('Starts')
@@ -203,11 +219,10 @@ def main():
     missed_match_times = 0
     start_time, all_snipe_index, failed_snipe = 0, [], False
     first_start = True # add this to detect whether it is first start
-
     while True:
 
         end_time = time.time()
-        if end_time - start_time > 1800:
+        if end_time - start_time > 5:
             change_make = True
             failed_snipe = True
         vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
@@ -236,7 +251,9 @@ def main():
             CAR_MAKE,CAR_MAKE_LOCATION, CAR_MODEL_Full_Name, CAR_MODEL_Short_Name, CAR_MODEL_LOCATION = df.iloc[index,].values[:5]
             new_make, new_CAR_MODEL_ORDER = eval(CAR_MAKE_LOCATION), CAR_MODEL_LOCATION
             print(f'Sniping {blue_code}{CAR_MODEL_Full_Name}{color_end_code}')   
-            # modify 
+            # reset cursor
+            move_mouse(left+10, top+40)
+            multi_click_left(3)
             # car details
             multi_press('w', 6) # one more move make sure it goes smoothly
             go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
@@ -297,8 +314,7 @@ def main():
         # if stuck somewhere unknown, this may work
         if vertify_press_SA==False and vertify_press_CF==False and found_carpage==None:
             print(f'{red_code}Fail to match anything. Try to press ESC to see whether it works!{color_end_code}')
-            pyau.moveTo(left+20, top+20, duration=0.001)
-            click_left()
+            active_game_window(game_title)
             pydi.press('esc')
             time.sleep(0.2)                
             if missed_match_times > 10:
