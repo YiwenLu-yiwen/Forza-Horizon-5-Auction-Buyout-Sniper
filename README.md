@@ -31,7 +31,7 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 |         |            |
 
 ## Limits:
-1. The location (numbers) in [CARS.csv](https://github.com/YiwenLu-yiwen/Forza-5-CAR-BUYOUT-Sniper/blob/main/CARS.csv) __MUST BE CORRECT__!!!
+1. [FH5_all_cars_info_v3.xlsx](https://github.com/YiwenLu-yiwen/Forza-Horizon-5-Auction-Buyout-Sniper/blob/main/FH5_all_cars_info_v3.xlsx) must be up to date. Otherwise, it may buy different cars.
 
 ## Future Work
 - [ ] Apply a better interface rather than console.
@@ -77,7 +77,7 @@ python main.py
 
     Steps: 
     1. Download zip file on [release page](https://github.com/YiwenLu-yiwen/Forza-Horizon-5-Auction-Buyout-Sniper/releases).
-    2. Modify the images folder.
+    2. Modify the images folder.(No need if you are satisfied pre-requirements)
     3. Modify the `FH5_all_cars_info_v3.csv`.
     4. Run the exe.
 
@@ -88,6 +88,6 @@ python main.py
 
 3. Set auction filter to "ANY".
 
-4. Stay with this screen (Search auctions must be active), then run the script or exe.
+4. Stay with this screen (Search auctions must be active), then run the script or exe.(Suggestion: To make sure script selecting correct `MAKE`, Plz put your cursor outside game window !!!!)
 
 ![Auction House](archive/auction_house.png)
