@@ -98,7 +98,7 @@ def measure_game_window(title):
     try:
         game_window = active_game_window(title)
         if game_window:
-            # game_window.resizeTo(width, height)
+            game_window.resizeTo(1616, 939) # fix this
             # measure game window
             left, top, width, height = game_window.left, game_window.top, game_window.width, game_window.height
             print(f"\033[1;34;40mGame window found: \033[1;32;40m{title}\033[0m")
@@ -180,12 +180,7 @@ def main():
     # check game resolution
     game_title = "Forza Horizon 5" 
     left, top, width, height = measure_game_window(game_title)
-    print(f'{cyan_code}{game_title} resolution is {width}x{height} pixels!{color_end_code}')
-    if width!=1616 and height!=939:
-        print(f'{red_code}{game_title} resolution is not 1920*1080 (Windowed){color_end_code}')
-        print(f'{red_code}Try to restart the game!{color_end_code}')
-        exit_script()
-        return -1
+    print(f'{cyan_code} Resize {game_title} resolution is {width}x{height} pixels!{color_end_code}')
     
     # screenshot regions here
     threshold=0.8
