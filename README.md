@@ -25,9 +25,10 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 | ✅ Enable single or multi auction snipers   |  v2.0          | Support one or many different car snipers      |
 | ✅ Smart auto switch cars                   |  v3.0          | If one auction takes more than 30mins, switch to another car  |
 | ✅ Easy set-up                              |  v4.0          | Only needs to set how many cars you want to buy |
-| ✅  Memory efficient with only 40MB         |  v1.1          | Less memory costs      |
+| ✅ Memory efficient with 40MB(->80MB)       |  v1.1(->v4.0)  | Less memory costs      |
 | ✅ Include all car info                     |  v4.0          | Include short_name, seasons, DLC, Autoshow,etc    |
-✅ Game pre-check                     |  v4.0          |Game and windows resolution pre-check |
+| ✅ Game pre-check                           |  v4.0          | Game and windows resolution pre-check |
+| ✅ Few auction house setting                |  v5.0          | Only needs to set Price|
 |         |            |
 
 ## Limits:
@@ -86,8 +87,8 @@ python main.py
 
 2. Modify the `FH5_all_cars_info_v3.csv` for your own needs.
 
-3. Set auction filter to "ANY".
+3. Optional: Set auction price. 
 
-4. Stay with this screen (Search auctions must be active), then run the script or exe.(Suggestion: To make sure script selecting correct `MAKE`, Plz put your cursor outside game window !!!!)
+4. Stay with this screen (Search auctions must be active), then run the script or exe.
 
 ![Auction House](archive/auction_house.png)
