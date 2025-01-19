@@ -163,6 +163,11 @@ def multi_click_left(n):
         click_left()
         time.sleep(0.01)
 
+def hold_key(button,secs=5):
+    pyau.keyDown(button) #holds the key down
+    time.sleep(secs)
+    pyau.keyUp(button) #releases the key
+
 def main():
     colorama.init(wrap=True)
     print('Welcome to the Forza 5 CAR BUYOUT Snipper')
@@ -180,7 +185,7 @@ def main():
     # check game resolution
     game_title = "Forza Horizon 5" 
     left, top, width, height = measure_game_window(game_title)
-    print(f'{cyan_code} Resize {game_title} resolution is {width}x{height} pixels!{color_end_code}')
+    print(f'{cyan_code}Resize {game_title} resolution to {width}x{height} pixels!{color_end_code}')
     
     # screenshot regions here
     threshold=0.8
@@ -211,7 +216,7 @@ def main():
 
     change_make = True
     new_make, new_CAR_MODEL_ORDER = (0,0), 0
-    missed_match_times = 0
+    missed_match_times = 1
     start_time, all_snipe_index, failed_snipe = 0, [], False
     first_start = True # add this to detect whether it is first start
     while True:
@@ -220,18 +225,18 @@ def main():
         if end_time - start_time > 1800:
             change_make = True
             failed_snipe = True
+        # press search auction
         vertify_press_SA = press_image(image_path_SA, search_region_auction, width_ratio, height_ratio, threshold)
         time.sleep(0.1)
-        # change car here
+        # change car functions
         if change_make and find_max_percentage_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold):
+            # if time out, print this message
             if failed_snipe and not first_start:
-                failed_snipe=False
                 end_time = time.time()
                 minutes, remaining_seconds = convert_seconds(end_time-start_time)
                 print(f'[{minutes}:{remaining_seconds}] TIME OUT, Switching to Next Auction Sniper!')
-            else:
-                first_start=False
-            start_time = time.time()
+            failed_snipe=False
+            start_time = time.time() # initial start time
             vertify_press_CF = True
             change_make = False
             # read file and filter non-zero cars
@@ -239,7 +244,8 @@ def main():
             if len(df[df['BUYOUT NUM'] > 0]) == 0:
                 print(f'{green_code}Finish Sniping!{color_end_code}')
                 break
-            all_snipe_index = df[df['BUYOUT NUM'] > 0].index.tolist() if all_snipe_index == [] else all_snipe_index
+            # ignore car model location =-1
+            all_snipe_index = df[(df['BUYOUT NUM'] > 0) & (df['CAR MODEL LOCATION']!=-1)].index.tolist() if all_snipe_index == [] else all_snipe_index
             index = all_snipe_index.pop()
             old_make, old_CAR_MODEL_ORDER = new_make, new_CAR_MODEL_ORDER
 
@@ -251,6 +257,16 @@ def main():
             multi_click_left(3)
             # car details
             multi_press('w', 6) # one more move make sure it goes smoothly
+            # if first time, move to ANY
+            if first_start:
+                first_start = False
+                # initial MAKE location to any
+                pydi.press('enter')
+                hold_key('w', 5)
+                time.sleep(0.3)
+                hold_key('a', 3)
+                pydi.press('enter')
+                time.sleep(0.3)
             go_to_MAKE(old_make, old_CAR_MODEL_ORDER, new_make, new_CAR_MODEL_ORDER)
         else:
             vertify_press_CF = press_image(image_path_CF, search_region_auction, width_ratio, height_ratio, threshold)
@@ -308,7 +324,7 @@ def main():
                 time.sleep(0.1)
         # if stuck somewhere unknown, this may work
         if vertify_press_SA==False and vertify_press_CF==False and found_carpage==None:
-            print(f'{red_code}Fail to match anything. Try to press ESC to see whether it works!{color_end_code}')
+            print(f'{red_code}Fail to match anything. {missed_match_times}-th try to press ESC to see whether it works!{color_end_code}')
             active_game_window(game_title)
             pydi.press('esc')
             time.sleep(0.2)                
