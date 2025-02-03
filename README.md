@@ -32,7 +32,7 @@ In this demo, we let the script snipe these four cars `AUDI RS`, `AUDI R1`, `MEG
 |         |            |
 
 ## Limits:
-1. [FH5_all_cars_info_v3.xlsx](https://github.com/YiwenLu-yiwen/Forza-Horizon-5-Auction-Buyout-Sniper/blob/main/FH5_all_cars_info_v3.xlsx) must be up to date. Otherwise, it may buy different cars.
+1. [FH5_all_cars_info_v3.xlsx](https://github.com/YiwenLu-yiwen/Forza-Horizon-5-Auction-Buyout-Sniper/blob/main/FH5_all_cars_info_v3.xlsx) must be up to date. Otherwise, it may buy different cars. (PS: Update at 03/02/25)
 
 ## Future Work
 - [ ] Apply a better interface rather than console.
